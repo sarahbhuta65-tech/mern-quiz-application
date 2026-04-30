@@ -1,2 +1,15 @@
-# mern-quiz-application
-Full Stack Quiz Application built using Node.js, Express, MongoDB and JavaScript with student and teacher login system.
+# MERN Quiz Application
+
+Full stack quiz system with student and teacher login functionality.
+
+## Tech Stack
+Node.js | Express | MongoDB | HTML | CSS | JavaScript
+
+## Features
+- Quiz Attempt
+- Result System
+- Teacher Dashboard
+- Student Login
+
+## Author
+Sarah Bhuta
