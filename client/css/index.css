@@ -1,0 +1,155 @@
+:root {
+    --primary-cyan: #00e6e6;
+    --dark-bg: #0f2027;
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --nav-bg: rgba(2, 6, 23, 0.9);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    height: 70px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Fix for your dark logo */
+.logo-bright {
+    height: 40px;
+    filter: brightness(0) invert(1); /* Forces logo to be white */
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-left: 10px;
+}
+
+.nav-right a {
+    color: #cbd5e1;
+    text-decoration: none;
+    margin-left: 30px;
+    transition: 0.3s;
+}
+
+.nav-right a:hover { color: var(--primary-cyan); }
+
+/* Main Content */
+.main-container { padding: 50px 20px; text-align: center; }
+
+.header h1 {
+    font-size: 3rem;
+    background: linear-gradient(to right, #fff, var(--primary-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+/* Cards with Glassmorphism */
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    width: 320px;
+    border-radius: 24px;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary-cyan);
+    box-shadow: 0 20px 40px rgba(0, 230, 230, 0.15);
+}
+
+.card i {
+    font-size: 50px;
+    color: var(--primary-cyan);
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.btn-cyan { background: var(--primary-cyan); color: #000; }
+.btn-cyan:hover { background: #fff; box-shadow: 0 0 20px var(--primary-cyan); }
+
+.btn-outline { 
+    background: transparent; 
+    border: 2px solid var(--primary-cyan); 
+    color: var(--primary-cyan); 
+}
+
+/* Instructions */
+.instructions {
+    max-width: 600px;
+    margin: 60px auto;
+    background: rgba(0,0,0,0.3);
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 4px solid #ff4d4d;
+    text-align: left;
+}
+
+.instructions h3 { color: #ff4d4d; margin-bottom: 10px; }
+.instructions li { margin: 10px 0; color: #ccc; }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1a2a3a;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 450px;
+    text-align: center;
+    border: 1px solid var(--primary-cyan);
+}
