@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Portal | SmartQuiz</title>
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { display: flex; min-height: 100vh; }
+
+        .left-panel {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            padding: 60px; position: relative; overflow: hidden;
+        }
+        .left-panel::before {
+            content: ''; position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(139,92,246,0.2), transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%,-50%);
+        }
+        .left-panel img { width: 90px; filter: drop-shadow(0 0 20px rgba(139,92,246,0.5)); margin-bottom: 20px; position: relative; }
+        .left-panel h2 { font-size: 1.6rem; font-weight: 800; position: relative; }
+        .left-panel p { color: var(--text-muted); margin-top: 8px; font-size: 0.9rem; position: relative; }
+
+        .perks { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px; position: relative; }
+        .perk { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 0.85rem; color: var(--text-soft); }
+        .perk i { color: #8b5cf6; width: 16px; }
+
+        .right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px; }
+
+        .auth-box { width: 100%; max-width: 420px; }
+        .auth-box h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+        .auth-box .subtitle { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 28px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+
+        .btn-primary { width: 100%; justify-content: center; padding: 14px; font-size: 0.95rem; margin-top: 6px; }
+        .toggle-row { text-align: center; margin-top: 18px; font-size: 0.88rem; color: var(--text-muted); }
+        .toggle-row span { color: #a78bfa; font-weight: 600; cursor: pointer; }
+        .toggle-row span:hover { text-decoration: underline; }
+        .back-link { display: block; text-align: center; margin-top: 16px; color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
+        .back-link:hover { color: var(--text-primary); }
+
+        .invite-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+        @media (max-width: 768px) { .left-panel { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="left-panel">
+    <img src="logo5.png" alt="Logo">
+    <h2 class="grad-text">Instructor Portal</h2>
+    <p>Your classroom, your data.</p>
+    <div class="perks">
+        <div class="perk"><i class="fas fa-lock"></i> Private quiz bank</div>
+        <div class="perk"><i class="fas fa-chart-bar"></i> Your students' reports only</div>
+        <div class="perk"><i class="fas fa-robot"></i> AI quiz generation</div>
+        <div class="perk"><i class="fas fa-download"></i> CSV export</div>
+    </div>
+</div>
+
+<div class="right-panel">
+    <div class="auth-box">
+        <h3 id="authTitle">Instructor Login</h3>
+        <p class="subtitle" id="authSubtitle">Sign in to your instructor account</p>
+
+        <div class="form-group">
+            <label>Username</label>
+            <input class="input" type="text" id="username" placeholder="Your username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input class="input" type="password" id="password" placeholder="Your password">
+        </div>
+        <div class="form-group" id="inviteGroup" style="display:none;">
+            <label>Invite Code</label>
+            <input class="input" type="text" id="inviteCode" placeholder="Enter instructor invite code">
+            <p class="invite-note">Ask your administrator for the invite code.</p>
+        </div>
+
+        <button class="btn-primary" onclick="processAuth()">
+            <i class="fas fa-sign-in-alt"></i> <span id="btnText">Sign In</span>
+        </button>
+
+        <div class="toggle-row">
+            <span id="toggleMsg">New instructor?</span>
+            <span onclick="toggleForm()" id="toggleLink"> Create Account</span>
+        </div>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Home</a>
+    </div>
+</div>
+
+<script>
+    let isLogin = true;
+
+    function toggleForm() {
+        isLogin = !isLogin;
+        document.getElementById("authTitle").innerText    = isLogin ? "Instructor Login"   : "Create Instructor Account";
+        document.getElementById("authSubtitle").innerText = isLogin ? "Sign in to your instructor account" : "Register with your invite code";
+        document.getElementById("btnText").innerText      = isLogin ? "Sign In"             : "Create Account";
+        document.getElementById("toggleMsg").innerText    = isLogin ? "New instructor?"     : "Already have an account?";
+        document.getElementById("toggleLink").innerText   = isLogin ? " Create Account"     : " Sign In";
+        document.getElementById("inviteGroup").style.display = isLogin ? "none" : "block";
+    }
+
+    async function processAuth() {
+        const username   = document.getElementById("username").value.trim();
+        const password   = document.getElementById("password").value.trim();
+        const inviteCode = document.getElementById("inviteCode").value.trim();
+
+        if (!username || !password) return alert("Please fill in all fields.");
+        if (!isLogin && !inviteCode) return alert("Invite code is required to register.");
+
+        const endpoint = isLogin ? "/api/login" : "/api/teacher-signup";
+        const body = isLogin ? { username, password } : { username, password, inviteCode };
+
+        try {
+            const res  = await fetch(`http://localhost:8000${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                if (isLogin) {
+                    if (data.role !== "instructor")
+                        return alert("This account is not an instructor account.");
+                    sessionStorage.setItem("isInstructor", "true");
+                    localStorage.setItem("teacherToken", data.token);
+                    localStorage.setItem("teacherName", data.username);
+                    window.location.href = "teacher.html";
+                } else {
+                    alert("Instructor account created! Please sign in.");
+                    toggleForm();
+                    document.getElementById("username").value = "";
+                    document.getElementById("password").value = "";
+                    document.getElementById("inviteCode").value = "";
+                }
+            } else {
+                alert(data.error || "Authentication failed.");
+            }
+        } catch (err) {
+            alert("Connection failed. Make sure the server is running on port 8000.");
+        }
+    }
+</script>
+</body>
+</html>

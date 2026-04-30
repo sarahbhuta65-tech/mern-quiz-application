@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | SmartQuiz</title>
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 230px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 16px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-brand { font-size: 1rem; font-weight: 700; margin-bottom: 32px; padding: 0 8px; }
+        .sidebar-brand span { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; display: block; margin-top: 2px; }
+
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .nav-links li {
+            padding: 11px 14px; cursor: pointer;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted); font-size: 0.88rem; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            transition: all 0.2s;
+        }
+        .nav-links li:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .nav-links li.active { background: rgba(139,92,246,0.12); color: #a78bfa; border-left: 3px solid #8b5cf6; }
+        .nav-links li.danger { color: #ef4444; margin-top: auto; }
+        .nav-links li.danger:hover { background: rgba(239,68,68,0.08); }
+
+        .main { flex: 1; padding: 40px; overflow-y: auto; background: var(--bg-base); }
+
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+        .page-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .stat-icon {
+            width: 46px; height: 46px;
+            border-radius: 12px;
+            background: var(--grad);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .stat-card h3 { font-size: 1.8rem; font-weight: 700; }
+        .stat-card p { color: var(--text-muted); font-size: 0.8rem; margin-top: 2px; }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .chart-card h3 { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .table-card h3 { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 20px 24px 0; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 12px 24px; text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 24px; font-size: 0.88rem; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        tr:last-child td { border-bottom: none; }
+        .pass-text { color: var(--pass); font-weight: 600; }
+        .fail-text { color: var(--fail); font-weight: 600; }
+        .violation { color: var(--warn); }
+        .secure { color: var(--pass); }
+
+        .content-block { display: none; }
+        .content-block.active { display: block; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="grad-text" style="font-size:1rem; font-weight:700; -webkit-text-fill-color:unset; background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SmartQuiz</span>
+        <span id="displayStudentName">Student</span>
+    </div>
+    <ul class="nav-links">
+        <li class="active" id="nav-overview" onclick="showStudentSection('overview')"><i class="fas fa-home"></i> Overview</li>
+        <li id="nav-history" onclick="showStudentSection('history')"><i class="fas fa-history"></i> My History</li>
+        <li onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Home</li>
+        <li class="danger" onclick="logoutStudent()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+    </ul>
+</aside>
+
+<main class="main">
+    <div id="overviewSection" class="content-block active">
+        <div class="page-header">
+            <h1>Overview</h1>
+            <p>Your performance at a glance</p>
+        </div>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                <div><h3 id="myTotalQuizzes">0</h3><p>Quizzes Taken</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div><h3 id="myAvgScore">0%</h3><p>Average Score</p></div>
+            </div>
+        </div>
+        <div class="chart-card">
+            <h3>Performance Trend</h3>
+            <canvas id="studentProgressChart" style="max-height:280px;"></canvas>
+        </div>
+    </div>
+
+    <div id="historySection" class="content-block">
+        <div class="page-header">
+            <h1>Quiz History</h1>
+            <p>All your past attempts</p>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz Code</th>
+                        <th>Date</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th>Integrity</th>
+                    </tr>
+                </thead>
+                <tbody id="studentHistoryTable">
+                    <tr><td colspan="5" style="color:var(--text-muted); text-align:center; padding:32px;">No attempts yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="student.js"></script>
+</body>
+</html>

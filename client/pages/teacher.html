@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Lab | Smart Quiz</title>
+    <link rel="stylesheet" href="teacher.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <nav class="sidebar">
+        <div class="logo-area">
+            <i class="fas fa-user-shield"></i>
+            <div>
+                <div>Instructor Lab</div>
+                <div style="font-size:0.75rem; opacity:0.6; font-weight:400;" id="teacherNameDisplay"></div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li onclick="showSection('stats')" id="nav-stats" class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
+            <li onclick="showSection('create')" id="nav-create"><i class="fas fa-plus-square"></i> Create Quiz</li>
+            <li onclick="showSection('ai')" id="nav-ai"><i class="fas fa-robot"></i> AI Generate</li>
+            <li onclick="showSection('bank')" id="nav-bank"><i class="fas fa-database"></i> Quiz Bank</li>
+            <li onclick="showSection('reports')" id="nav-reports"><i class="fas fa-user-graduate"></i> Student Reports</li>
+            <li onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Exit</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div id="statsSection" class="content-block">
+            <div class="header-flex">
+                <h1>Analytics Overview</h1>
+                <button class="primary-btn" onclick="refreshStats()" style="margin:0; padding: 10px 20px;">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-file-alt"></i>
+                    <div>
+                        <h3 id="totalQuizzes">0</h3>
+                        <p>Active Quizzes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-user-check"></i>
+                    <div>
+                        <h3 id="totalAttempts">0</h3>
+                        <p>Total Attempts</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-row">
+                <div class="chart-container">
+                    <h3>Performance Trend</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <div class="leaderboard-container">
+                    <h3>🏆 Top Performers</h3>
+                    <ol id="leaderboardList"></ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="createSection" class="content-block" style="display:none;">
+            <h2>Configure Assessment</h2>
+            <div class="glass-form">
+                <input type="text" id="quizCodeInput" placeholder="Enter Quiz Code (e.g. JAVA101)">
+                <div id="questionContainer"></div>
+                <button class="primary-btn" onclick="addNewQuestionField()">+ Add Question</button>
+                <button class="primary-btn" style="background: #00ffa3;" onclick="saveCompleteQuiz()">Publish Quiz</button>
+            </div>
+        </div>
+
+        <div id="aiSection" class="content-block" style="display:none;">
+            <h2><i class="fas fa-robot" style="color:#00eaff;"></i> AI Quiz Generator</h2>
+            <div class="glass-form">
+                <label style="color:#8ba1ad; font-size:0.85rem; margin-bottom:6px; display:block;">GROQ API KEY</label>
+                <input type="password" id="geminiKey" placeholder="Paste your Groq API key here (console.groq.com)...">
+
+                <label style="color:#8ba1ad; font-size:0.85rem; margin-bottom:6px; display:block;">QUIZ CODE FOR GENERATED QUIZ</label>
+                <input type="text" id="aiQuizCode" placeholder="e.g. AI-PYTHON01">
+
+                <label style="color:#8ba1ad; font-size:0.85rem; margin-bottom:6px; display:block;">TOPIC</label>
+                <input type="text" id="aiTopic" placeholder="e.g. Python basics, World War 2, Newton's Laws...">
+
+                <label style="color:#8ba1ad; font-size:0.85rem; margin-bottom:6px; display:block;">NUMBER OF QUESTIONS</label>
+                <input type="number" id="aiCount" value="5" min="1" max="15" style="width:120px;">
+
+                <div style="margin-top:16px;">
+                    <button class="primary-btn" onclick="generateAIQuiz()" id="aiBtn">
+                        <i class="fas fa-magic"></i> Generate Quiz
+                    </button>
+                </div>
+
+                <div id="aiStatus" style="margin-top:16px; color:#8ba1ad; font-size:0.9rem;"></div>
+                <div id="aiPreview" style="margin-top:16px;"></div>
+            </div>
+        </div>
+
+        <div id="bankSection" class="content-block" style="display:none;">
+        <h2>Quiz Inventory</h2>
+        <div id="quizInventoryList" class="inventory-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        </div>
+        </div>
+
+        <div id="reportsSection" class="content-block" style="display:none;">
+            <div class="header-flex">
+                <h2>Detailed Reports</h2>
+                <button class="primary-btn" onclick="downloadReportsCSV()" style="background:#00ffa3;">
+                    <i class="fas fa-download"></i> Download CSV
+                </button>
+            </div>
+            <div style="margin-bottom: 16px; max-width: 360px;">
+                <input type="text" id="reportSearch" placeholder="🔍  Search by student or quiz code..." oninput="filterReports()" style="margin-bottom:0;">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Code</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Integrity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="teacher.js"></script>
+<script src="quiz.js"></script>
+</body>
+</html>

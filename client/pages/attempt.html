@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attempt Quiz</title>
+  <link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2>Start Quiz</h2>
+
+  <input type="text" id="studentName" placeholder="Enter Your Name">
+  <input type="text" id="quizCode" placeholder="Enter Quiz Code">
+
+  <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<script>
+function startQuiz() {
+  const name = document.getElementById("studentName").value.trim();
+  const code = document.getElementById("quizCode").value.trim();
+
+  if (!name || !code) {
+    alert("Please enter your name and quiz code");
+    return;
+  }
+
+  const quiz = localStorage.getItem("quiz_" + code);
+
+  if (!quiz) {
+    alert("Invalid Quiz Code");
+    return;
+  }
+
+  localStorage.setItem("activeQuiz", quiz);
+  localStorage.setItem("studentName", name);
+
+  window.location.href = "quiz.html";
+}
+</script>
+
+</body>
+</html>

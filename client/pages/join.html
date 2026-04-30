@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Join Quiz</title>
+</head>
+<body>
+
+<h2>Enter Quiz Code</h2>
+
+<input type="text" id="quizCodeInput" placeholder="Enter Code">
+<button onclick="joinQuiz()">Start Quiz</button>
+
+<script>
+function joinQuiz() {
+  const code = document.getElementById("quizCodeInput").value.trim();
+
+  const quiz = localStorage.getItem("quiz_" + code);
+
+  if (!quiz) {
+    alert("Invalid Quiz Code");
+    return;
+  }
+
+  localStorage.setItem("activeQuiz", quiz);
+  window.location.href = "quiz.html";
+}
+</script>
+
+</body>
+</html>
